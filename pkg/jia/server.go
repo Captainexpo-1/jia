@@ -37,6 +37,23 @@ func StartServer(config *Config) {
 	http.HandleFunc("/slack/events", handleSlackEvents)
 	http.HandleFunc("/slack/leaderboard", HandleLeaderboardSlashCommand)
 	http.HandleFunc("/slack/eventsCommand", HandleEventsSlashCommand)
+	http.HandleFunc("/api/currentNumber", func(w http.ResponseWriter, r *http.Request) {
+		number, err := redisClient.Get("last_valid_number").Int()
+		if err != nil {
+			w.WriteHeader(500)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
+		response, _ := json.Marshal(struct {
+			CurrentNumber int `json:"number"`
+		}{
+			CurrentNumber: number,
+		})
+
+		w.Header().Add("Content-Type", "application/json")
+		w.Write(response)
+	})
 	http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", config.Port), nil)
 }
 
