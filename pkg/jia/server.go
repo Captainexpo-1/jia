@@ -38,6 +38,8 @@ func StartServer(config *Config) {
 	http.HandleFunc("/slack/leaderboard", HandleLeaderboardSlashCommand)
 	http.HandleFunc("/slack/eventsCommand", HandleEventsSlashCommand)
 	http.HandleFunc("/api/currentNumber", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Access-Control-Allow-Origin", "*")
+
 		number, err := redisClient.Get("last_valid_number").Int()
 		if err != nil {
 			w.WriteHeader(500)
