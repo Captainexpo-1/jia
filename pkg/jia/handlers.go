@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/slack-go/slack"
@@ -89,10 +90,30 @@ func onMessage(slackClient *slack.Client, event *slackevents.MessageEvent) {
 		return
 	}
 
+	// kog detection
+	lastCountAtInt, err := redisClient.Get("last_count_at").Int64()
+	if err != nil {
+		log.Println(err)
+	}
+	lastCountAt := time.Unix(lastCountAtInt, 0)
+
+	if event.User == "UR6P49Q79" && time.Since(lastCountAt).Seconds() < 2 && strings.Contains(lastValidNumberStr, "69") {
+		slackClient.AddReaction("bangbang", slack.ItemRef{
+			Channel:   event.Channel,
+			Timestamp: event.TimeStamp,
+		})
+		slackClient.AddReaction("robot_face", slack.ItemRef{
+			Channel:   event.Channel,
+			Timestamp: event.TimeStamp,
+		})
+		return
+	}
+
 	// Finally!
 	redisClient.Set("last_valid_number", matchedNumber, 0)
 	redisClient.Set("last_valid_ts", event.TimeStamp, 0)
 	redisClient.Set("last_sender_id", event.User, 0)
+	redisClient.Set("last_count_at", time.Now().Unix(), 0)
 
 	// Get the current month/year in UTC
 	now := time.Now().UTC()
