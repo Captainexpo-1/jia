@@ -97,7 +97,7 @@ func onMessage(slackClient *slack.Client, event *slackevents.MessageEvent) {
 	}
 	lastCountAt := time.Unix(lastCountAtInt, 0)
 
-	if event.User == "UR6P49Q79" && time.Since(lastCountAt).Seconds() < 2 && strings.Contains(lastValidNumberStr, "69") {
+	if event.User == "UR6P49Q79" && time.Since(lastCountAt).Seconds() < 2 && strings.Contains(strconv.Itoa(matchedNumber), "69") {
 		slackClient.AddReaction("bangbang", slack.ItemRef{
 			Channel:   event.Channel,
 			Timestamp: event.TimeStamp,
