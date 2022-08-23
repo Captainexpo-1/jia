@@ -90,20 +90,20 @@ func onMessage(slackClient *slack.Client, event *slackevents.MessageEvent) {
 		return
 	}
 
-	// kog detection
+	// kog + celeste detection
 	lastCountAtInt, err := redisClient.Get("last_count_at").Int64()
 	if err != nil {
 		log.Println(err)
 	}
 	lastCountAt := time.Unix(lastCountAtInt, 0)
 
-	if event.User == "UR6P49Q79" {
-		fmt.Println("Kogbot detected.")
+	if event.User == "UR6P49Q79" || event.User == "U02KYLBLKR9" {
+		fmt.Println("kogcelestebot detected.")
 		fmt.Printf("Time: %v\n", time.Since(lastCountAt).Seconds())
 		fmt.Printf("Contains 69: %v\n", strings.Contains(strconv.Itoa(matchedNumber), "69"))
 	}
 
-	if event.User == "UR6P49Q79" && time.Since(lastCountAt).Seconds() < 4 && strings.Contains(strconv.Itoa(matchedNumber), "69") {
+	if (event.User == "UR6P49Q79" || event.User == "U02KYLBLKR9") && time.Since(lastCountAt).Seconds() < 4 /*  && strings.Contains(strconv.Itoa(matchedNumber), "69") */ {
 		slackClient.AddReaction("bangbang", slack.ItemRef{
 			Channel:   event.Channel,
 			Timestamp: event.TimeStamp,
