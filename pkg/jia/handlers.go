@@ -103,7 +103,14 @@ func onMessage(slackClient *slack.Client, event *slackevents.MessageEvent) {
 		fmt.Printf("Contains 69: %v\n", strings.Contains(strconv.Itoa(matchedNumber), "69"))
 	}
 
-	if event.User == "UR6P49Q79" && time.Since(lastCountAt).Seconds() < 4 && strings.Contains(strconv.Itoa(matchedNumber), "69") {
+	if event.user == "U042MP4PJ5U" {
+		fmt.Println("Number Basher Bot detected.")
+		fmt.Printf("Time: %v\n", time.Since(lastCountAt).Seconds())
+	}
+
+	if ((event.User == "UR6P49Q79" && strings.Contains(strconv.Itoa(matchedNumber), "69") || event.User == "U042MP4PJ5U" /* add more users as needed */) 
+		&& time.Since(lastCountAt).Seconds() < 4 ) {
+		// the message was sent by a bot
 		slackClient.AddReaction("bangbang", slack.ItemRef{
 			Channel:   event.Channel,
 			Timestamp: event.TimeStamp,
